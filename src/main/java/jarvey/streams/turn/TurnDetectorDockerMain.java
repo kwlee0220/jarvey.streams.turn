@@ -8,12 +8,18 @@ import org.apache.kafka.common.serialization.Serdes.StringSerde;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.Topology;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jarvey.streams.zone.NodeZoneTrackerDockerMain;
 
 /**
  * 
  * @author Kang-Woo Lee (ETRI)
  */
 public class TurnDetectorDockerMain {
+	private static final Logger s_logger = LoggerFactory.getLogger(NodeZoneTrackerDockerMain.class);
+	
 	public static void main(String... args) throws Exception {
 		Map<String,String> envs = System.getenv();
 
@@ -21,6 +27,12 @@ public class TurnDetectorDockerMain {
 		String kafkaServers = envs.getOrDefault("KAFKA_BOOTSTRAP_SERVERS_CONFIG", "localhost:9092");
 		String topicLocationEvents = envs.getOrDefault("DNA_TOPIC_LOCATION_EVENTS", "location-events");
 		String topicTurnEvents = envs.getOrDefault("DNA_TOPIC_TURN_EVENTS", "turn-events");
+		
+		if ( s_logger.isInfoEnabled() ) {
+			s_logger.info("use Kafka servers: {}", kafkaServers);
+			s_logger.info("use Kafka topic: {}={}", "DNA_TOPIC_LOCATION_EVENTS", topicLocationEvents);
+			s_logger.info("use Kafka topic: {}={}", "DNA_TOPIC_TURN_EVENTS", topicTurnEvents);
+		}
 		
 		Topology topology = TurnTopologyBuilder.create()
 												.setLocationEventsTopic(topicLocationEvents)

@@ -16,21 +16,21 @@ import utils.stream.FStream;
  */
 public final class ZoneSequence {
 	@SerializedName("node") private String m_nodeId;
-	@SerializedName("luid") private long m_luid;
+	@SerializedName("track_id") private String m_trackId;
 	@SerializedName("visits") private List<ZoneTravel> m_visits;
 	@SerializedName("closed") private boolean m_closed;
 	
-	public static ZoneSequence from(String nodeId, long luid, ZoneTravel first) {
-		return new ZoneSequence(nodeId, luid, Lists.newArrayList(first));
+	public static ZoneSequence from(String nodeId, String trackId, ZoneTravel first) {
+		return new ZoneSequence(nodeId, trackId, Lists.newArrayList(first));
 	}
 	
-	public static ZoneSequence empty(String nodeId, long luid) {
-		return new ZoneSequence(nodeId, luid, Lists.newArrayList());
+	public static ZoneSequence empty(String nodeId, String trackId) {
+		return new ZoneSequence(nodeId, trackId, Lists.newArrayList());
 	}
 	
-	private ZoneSequence(String nodeId, long luid, List<ZoneTravel> travels) {
+	private ZoneSequence(String nodeId, String trackId, List<ZoneTravel> travels) {
 		m_nodeId = nodeId;
-		m_luid = luid;
+		m_trackId = trackId;
 		m_visits = travels;
 		m_closed = false;
 	}
@@ -39,8 +39,8 @@ public final class ZoneSequence {
 		return m_nodeId;
 	}
 	
-	public long getLuid() {
-		return m_luid;
+	public String getTrackId() {
+		return m_trackId;
 	}
 	
 	public int getVisitCount() {
@@ -98,7 +98,7 @@ public final class ZoneSequence {
 		List<ZoneTravel> visits = FStream.from(m_visits)
 										.map(ZoneTravel::duplicate)
 										.toList();
-		return new ZoneSequence(m_nodeId, m_luid, visits);
+		return new ZoneSequence(m_nodeId, m_trackId, visits);
 	}
 	
 	@Override
@@ -107,6 +107,6 @@ public final class ZoneSequence {
 								.map(ZoneTravel::toString)
 								.join('-');
 		String endStr = (m_closed) ? "-END" : "";
-		return String.format("%s/%d: %s%s", m_nodeId, m_luid, seqStr, endStr);
+		return String.format("%s/%d: %s%s", m_nodeId, m_trackId, seqStr, endStr);
 	}
 }

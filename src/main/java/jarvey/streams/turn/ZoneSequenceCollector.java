@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jarvey.streams.UpdateTimeAssociatedKeyValue;
-import jarvey.streams.model.GUID;
+import jarvey.streams.model.TrackletId;
 import jarvey.streams.zone.GlobalZoneId;
 import jarvey.streams.zone.ZoneLineRelationEvent;
 
@@ -29,7 +29,7 @@ public class ZoneSequenceCollector implements ValueTransformer<ZoneLineRelationE
 	private static final int DEFAULT_CHECKUP_MINUTES = 3;
 
 	private final String m_storeName;
-	private UpdateTimeAssociatedKeyValue<GUID, ZoneSequence> m_store;
+	private UpdateTimeAssociatedKeyValue<TrackletId, ZoneSequence> m_store;
 	
 	public ZoneSequenceCollector(String storeName) {
 		m_storeName = storeName;
@@ -37,7 +37,7 @@ public class ZoneSequenceCollector implements ValueTransformer<ZoneLineRelationE
 
 	@Override
 	public void init(ProcessorContext context) {
-		KeyValueStore<GUID, ZoneSequence> store = context.getStateStore(m_storeName);
+		KeyValueStore<TrackletId, ZoneSequence> store = context.getStateStore(m_storeName);
 		m_store = UpdateTimeAssociatedKeyValue.of(store);
 		context.schedule(Duration.ofMinutes(DEFAULT_CHECKUP_MINUTES),
 						PunctuationType.WALL_CLOCK_TIME,
@@ -46,7 +46,7 @@ public class ZoneSequenceCollector implements ValueTransformer<ZoneLineRelationE
 
 	@Override
 	public Iterable<ZoneSequence> transform(ZoneLineRelationEvent ev) {
-		GUID guid = ev.getGUID();
+		TrackletId guid = ev.getGUID();
 		
 		List<ZoneSequence> ret = Lists.newArrayList();
 		
@@ -60,7 +60,7 @@ public class ZoneSequenceCollector implements ValueTransformer<ZoneLineRelationE
 			case Entered:
 				if ( seq == null || seq.getVisitCount() == 0 ) {
 					// 현 물체에 대한 첫 zone 방문이므로, zone sequence 객체를 새로 생성
-					seq = ZoneSequence.empty(ev.getNodeId(), ev.getLuid());
+					seq = ZoneSequence.empty(ev.getNodeId(), ev.getTrackId());
 				}
 				else {
 					last = seq.getLastZoneTravel();
@@ -89,7 +89,7 @@ public class ZoneSequenceCollector implements ValueTransformer<ZoneLineRelationE
 			case Left:
 				if ( seq == null || seq.getVisitCount() == 0 ) {
 					// 추적 대상 물체가 처음 시작하는 단계이므로 zone sequence 객체를 생성함.
-					seq = ZoneSequence.empty(ev.getNodeId(), ev.getLuid());
+					seq = ZoneSequence.empty(ev.getNodeId(), ev.getTrackId());
 				}
 				
 				last = seq.getLastZoneTravel();
@@ -145,7 +145,7 @@ public class ZoneSequenceCollector implements ValueTransformer<ZoneLineRelationE
 			case Through:
 				if ( seq == null || seq.getVisitCount() == 0 ) {
 					// 현 물체에 대한 첫 zone 방문이므로, zone sequence 객체를 새로 생성
-					seq = ZoneSequence.empty(ev.getNodeId(), ev.getLuid());
+					seq = ZoneSequence.empty(ev.getNodeId(), ev.getTrackId());
 				}
 				else {
 					last = seq.getLastZoneTravel();

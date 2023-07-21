@@ -9,17 +9,17 @@ import com.google.gson.annotations.SerializedName;
  */
 public final class ObjectTurn {
 	@SerializedName("node") private String m_nodeId;
-	@SerializedName("luid") private long m_luid;
+	@SerializedName("track_id") private String m_trackId;
 	@SerializedName("turn") private String m_turn;
 	
-	public ObjectTurn(String nodeId, long luid, String turn) {
+	public ObjectTurn(String nodeId, String trackId, String turn) {
 		m_nodeId = nodeId;
-		m_luid = luid;
+		m_trackId = trackId;
 		m_turn = turn;
 	}
 	
 	@Override
 	public String toString() {
-		return String.format("Turn[%s/%d: %s]", m_nodeId, m_luid, m_turn);
+		return String.format("Turn[%s/%s: %s]", m_nodeId, m_trackId, m_turn);
 	}
 }

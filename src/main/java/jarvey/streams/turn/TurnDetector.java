@@ -40,7 +40,7 @@ public class TurnDetector implements ValueMapper<ZoneSequence, Iterable<ObjectTu
 		String turn = TURN_SIGNATURES.get(sig);
 //		System.out.printf("%s -> %s\n", seq, turn);
  		if ( turn != null ) {
-			return Arrays.asList(new ObjectTurn(seq.getNodeId(), seq.getTrackId(), turn));
+			return Arrays.asList(new ObjectTurn(seq.getTrackId(), turn));
 		}
 		else {
 			return Collections.emptyList();

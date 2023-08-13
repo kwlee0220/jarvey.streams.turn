@@ -15,28 +15,22 @@ import utils.stream.FStream;
  * @author Kang-Woo Lee (ETRI)
  */
 public final class ZoneSequence {
-	@SerializedName("node") private String m_nodeId;
 	@SerializedName("track_id") private String m_trackId;
 	@SerializedName("visits") private List<ZoneTravel> m_visits;
 	@SerializedName("closed") private boolean m_closed;
 	
-	public static ZoneSequence from(String nodeId, String trackId, ZoneTravel first) {
-		return new ZoneSequence(nodeId, trackId, Lists.newArrayList(first));
+	public static ZoneSequence from(String trackId, ZoneTravel first) {
+		return new ZoneSequence(trackId, Lists.newArrayList(first));
 	}
 	
-	public static ZoneSequence empty(String nodeId, String trackId) {
-		return new ZoneSequence(nodeId, trackId, Lists.newArrayList());
+	public static ZoneSequence empty(String trackId) {
+		return new ZoneSequence(trackId, Lists.newArrayList());
 	}
 	
-	private ZoneSequence(String nodeId, String trackId, List<ZoneTravel> travels) {
-		m_nodeId = nodeId;
+	private ZoneSequence(String trackId, List<ZoneTravel> travels) {
 		m_trackId = trackId;
 		m_visits = travels;
 		m_closed = false;
-	}
-	
-	public String getNodeId() {
-		return m_nodeId;
 	}
 	
 	public String getTrackId() {
@@ -90,7 +84,7 @@ public final class ZoneSequence {
 	public void collapseToPrevious(int idx) {
 		ZoneTravel travel = m_visits.get(idx);
 		ZoneTravel prev = m_visits.get(idx-1);
-		prev.close(travel.getLeaveFrameIndex(), travel.getLeaveTimestamp());
+		prev.close(travel.getLeaveTimestamp());
 		m_visits.remove(idx);
 	}
 	
@@ -98,7 +92,7 @@ public final class ZoneSequence {
 		List<ZoneTravel> visits = FStream.from(m_visits)
 										.map(ZoneTravel::duplicate)
 										.toList();
-		return new ZoneSequence(m_nodeId, m_trackId, visits);
+		return new ZoneSequence(m_trackId, visits);
 	}
 	
 	@Override
@@ -107,6 +101,6 @@ public final class ZoneSequence {
 								.map(ZoneTravel::toString)
 								.join('-');
 		String endStr = (m_closed) ? "-END" : "";
-		return String.format("%s/%d: %s%s", m_nodeId, m_trackId, seqStr, endStr);
+		return String.format("%s/%d: %s%s", m_trackId, seqStr, endStr);
 	}
 }

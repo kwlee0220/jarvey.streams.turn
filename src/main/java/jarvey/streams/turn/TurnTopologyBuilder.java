@@ -15,7 +15,7 @@ import org.apache.kafka.streams.state.Stores;
 import jarvey.streams.TrackTimestampExtractor;
 import jarvey.streams.model.TrackletId;
 import jarvey.streams.serialization.json.GsonUtils;
-import jarvey.streams.zone.ZoneLineRelationEvent;
+import jarvey.streams.zone.ZoneEvent;
 
 /**
  * 
@@ -60,10 +60,11 @@ public final class TurnTopologyBuilder {
 		
 		builder.addStateStore(Stores.keyValueStoreBuilder(
 											Stores.persistentKeyValueStore(STORE_ZONE_SEQUENCES),
-											TrackletId.getSerde(), GsonUtils.getSerde(ZoneSequence.class)));
+											GsonUtils.getSerde(TrackletId.class),
+											GsonUtils.getSerde(ZoneSequence.class)));
 		
 		KStream<String,ObjectTurn> turns
-			= builder.stream(m_topicLocationEvents, Consumed(KEY_SERDE, ZoneLineRelationEvent.class))
+			= builder.stream(m_topicLocationEvents, Consumed(KEY_SERDE, ZoneEvent.class))
 					.flatTransformValues(() -> new ZoneSequenceCollector(STORE_ZONE_SEQUENCES), STORE_ZONE_SEQUENCES)
 					.flatMapValues(new TurnDetector());
 		turns.print(Printed.<String, ObjectTurn>toSysOut().withLabel("turns"));

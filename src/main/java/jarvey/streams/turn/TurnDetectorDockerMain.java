@@ -11,14 +11,12 @@ import org.apache.kafka.streams.Topology;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jarvey.streams.zone.ZoneneTrackerDockerMain;
-
 /**
  * 
  * @author Kang-Woo Lee (ETRI)
  */
 public class TurnDetectorDockerMain {
-	private static final Logger s_logger = LoggerFactory.getLogger(ZoneneTrackerDockerMain.class);
+	private static final Logger s_logger = LoggerFactory.getLogger(TurnDetectorDockerMain.class);
 	
 	public static void main(String... args) throws Exception {
 		Map<String,String> envs = System.getenv();

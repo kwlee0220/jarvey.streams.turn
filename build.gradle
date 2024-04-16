@@ -34,6 +34,7 @@ repositories {
 
 ext {
 	log4j_version = '2.18.0'
+	guava_version = '32.1.3-jre'
 	gson_version = '2.9.0'
 	
 	geotools_version = '26.1'
@@ -51,6 +52,8 @@ dependencies {
 	implementation(project(":utils"))
 	implementation(project(":utils.geo"))
 	implementation(project(":jarvey.streams"))
+	
+	implementation "com.google.guava:guava:${guava_version}"
 	
 	// Log4j2 & SLF4j bridge
 	implementation "org.apache.logging.log4j:log4j-api:${log4j_version}"
